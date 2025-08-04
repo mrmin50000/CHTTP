@@ -11,8 +11,9 @@
 #define BACKLOG 10
 
 int main() {
-    int server_fd;
-    struct sockaddr_in server_addr;
+    int server_fd, client_fd;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t client_len = sizeof(client_addr);
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {
@@ -35,6 +36,25 @@ int main() {
     }    
 
     printf("Server works on port: %d\n", PORT);
+
+    while(1) {
+        printf("\nWaiting of new connection...\n");
+
+        client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+        if(client_fd < 0) {
+            perror("Error accept()");
+            continue;
+        }
+
+        printf("Client works: %s\n", inet_ntoa(client_addr.sin_addr));
+
+        char buffer[1024] = {0};
+        read(client_fd, buffer, sizeof(buffer) - 1);
+        printf("Request:\n%s\n", buffer);
+
+        close(client_fd);
+    }
+
     close(server_fd);
     return 0;
 }
