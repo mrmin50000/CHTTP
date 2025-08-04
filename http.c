@@ -50,6 +50,12 @@ int main() {
 
         char buffer[1024] = {0};
         read(client_fd, buffer, sizeof(buffer) - 1);
+        char response[] = "HTTP/1.1 200 OK\r\n"
+                          "Content-Type: text/html\r\n"
+                          "Content-Length: 19\r\n"
+                          "\r\n"
+                          "Hello, mrmin50000!";
+        write(client_fd, response, strlen(response));  
         printf("Request:\n%s\n", buffer);
 
         close(client_fd);
